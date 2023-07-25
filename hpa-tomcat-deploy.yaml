@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: eks-tomcat
+  name: test-tomcat
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: eks-tomcat
+  template:
+    metadata:
+      labels:
+        app: eks-tomcat
+    spec:
+      containers:
+      - image: 843285683127.dkr.ecr.us-west-1.amazonaws.com/tomcat
+        name: test-tomcat
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 300m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-tomcat
+spec:
+  selector:
+    app: eks-tomcat
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: NodePort
+  clusterIP: 172.20.0.4
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-tomcat
+spec:
+  maxReplicas: 10
+  minReplicas: 4
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: test-tomcat
+  targetCPUUtilizationPercentage: 20
