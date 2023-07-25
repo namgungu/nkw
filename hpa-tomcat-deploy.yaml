@@ -34,7 +34,7 @@ spec:
   - port: 8080
     targetPort: 8080
   type: NodePort
-  clusterIP: 172.20.0.4
+  clusterIP: 172.20.0.3
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
